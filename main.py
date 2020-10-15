@@ -12,6 +12,11 @@ def calcminutes(starttime, endtime):
         return (int(endtime[0:2]) - int(starttime[0:2])) * 60 + int(endtime[3:5]) - int(starttime[3:5])
 
 
+def getstarttime():
+    file.seek(0)
+    return file.readlines()[1][7:12]
+
+
 file = open(f'workingtime_{datetime.date.today()}.txt', 'a+')
 file.seek(0)
 lines = file.readlines()
@@ -31,9 +36,7 @@ if n == 1:
     print(f'{username}, you started working at {start}\n')
     n += 1
 else:
-    file.seek(0)
-    start = file.readlines()[1][7:12]
-    print(f'\nGood morning {username}\nToday, you started working at {start} and already made minutes of breaks.\n')
+    print(f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made minutes of breaks.\n')
 
 while True:
     if n > 1:
@@ -61,6 +64,11 @@ while True:
             for i in range(len(lines)):
                 file.write(lines[i])
             print(f'Starting time changed to {start}')
+        elif next == 'f':
+            end = input('When did you end your day? (hh:mm) ')
+            start = getstarttime()
+            workingtime=calcminutes(start,end)
+            print('{0:.3}'.format(workingtime/60))
         elif next == 'e':
             break
         else:
