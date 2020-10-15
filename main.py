@@ -26,17 +26,21 @@ else:
     username = lines[0][13:len(lines[0]) - 1]
 
 if n == 1:
-    start = input('When did you start working? [hh:mm] ')
+    start = input('\nWhen did you start working? [hh:mm] ')
     file.write(f'Start: {start}\n')
-    print(f'{username}, you started working at {start}')
+    print(f'{username}, you started working at {start}\n')
     n += 1
+else:
+    file.seek(0)
+    start=file.readlines()[1][7:12]
+    print(f'\nToday, you started working at {start} and already made minutes of breaks.\n')
 
 while True:
     if n > 1:
         next = input(
-            'What do you want to do next? Add break (period of time) (b) | Add break (point in time) (p) | End day (e) | change start time (s) ')
+            'What do you want to do next? Add break (period of time) (b) | Add break (point in time) (p) | Finish day (f) | change start time (s) | exit (e) ')
         if next == 'b':
-            breaktime = input('How long did your break last? [mm] ')
+            breaktime = input('\nHow long did your break last? [mm] ')
             file.write(f'break: {breaktime} minutes\n')
             print(f'Yor break lasted {breaktime} minutes')
         elif next == 'p':
