@@ -32,8 +32,8 @@ if n == 1:
     n += 1
 else:
     file.seek(0)
-    start=file.readlines()[1][7:12]
-    print(f'\nToday, you started working at {start} and already made minutes of breaks.\n')
+    start = file.readlines()[1][7:12]
+    print(f'\nGood morning {username}\nToday, you started working at {start} and already made minutes of breaks.\n')
 
 while True:
     if n > 1:
@@ -50,6 +50,8 @@ while True:
                                         input('When did you end your break? [hh:mm] '))
                 file.write(f'break: {breaktime} minutes\n')
                 print(f'Yor break lasted {breaktime} minutes\n')
+            else:
+                print(f'Please check your input "{next}".')
         elif next == 's':
             start = input('When did you start working? [hh:mm] ')
             file.seek(0)
@@ -59,7 +61,7 @@ while True:
             for i in range(len(lines)):
                 file.write(lines[i])
             print(f'Starting time changed to {start}')
-        elif next=='e':
+        elif next == 'e':
             break
         else:
             print(f'Please check your input "{next}".')
