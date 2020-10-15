@@ -17,6 +17,36 @@ def getstarttime():
     return file.readlines()[1][7:12]
 
 
+def getbreakduration():
+    file.seek(0)
+    lines = file.readlines()
+    breakduration = 0
+    for i in range(2, len(lines) - 2):
+        breakduration += int(lines[i][7:10])
+    return breakduration
+
+
+def changeline(content, line):
+    file.seek(0)
+    lines = file.readlines()
+    lines[line] = content + '\n'
+    file.truncate(0)
+    for i in range(len(lines)):
+        file.write(lines[i])
+
+
+def insertline(content, line):
+    file.seek(0)
+    lines = file.readlines()
+    lines.append('added')
+    for i in range(len(lines) - 1, line, -1):
+        lines[i] = lines[i - 1]
+    lines[line] = content + '\n'
+    file.truncate(0)
+    for i in range(len(lines)):
+        file.write(lines[i])
+
+
 file = open(f'workingtime_{datetime.date.today()}.txt', 'a+')
 file.seek(0)
 lines = file.readlines()
@@ -33,10 +63,13 @@ else:
 if n == 1:
     start = input('\nWhen did you start working? [hh:mm] ')
     file.write(f'Start: {start}\n')
+    file.write("You didn't finish your day yet.\n")
+    file.write("You didn't commit your data to the database yet.")
     print(f'{username}, you started working at {start}\n')
     n += 1
 else:
-    print(f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made minutes of breaks.\n')
+    print(
+        f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made {getbreakduration()} minutes of breaks.\n')
 
 while True:
     if n > 1:
@@ -46,29 +79,24 @@ while True:
             next = input('What do you want to do next? Add break duration (d) | Add break times (t) ')
             if next == 'd':
                 breaktime = input('\nHow long did your break last? [mm] ')
-                file.write(f'break: {breaktime} minutes\n')
+                insertline(f'break: {breaktime} minutes', len(lines) - 2)
                 print(f'Yor break lasted {breaktime} minutes\n')
             elif next == 't':
                 breaktime = calcminutes(input('When did you start your break? [hh:mm] '),
                                         input('When did you end your break? [hh:mm] '))
-                file.write(f'break: {breaktime} minutes\n')
+                insertline(f'break: {breaktime} minutes', len(lines) - 2)
                 print(f'Yor break lasted {breaktime} minutes\n')
             else:
                 print(f'Please check your input "{next}".')
         elif next == 's':
             start = input('When did you start working? [hh:mm] ')
-            file.seek(0)
-            lines = file.readlines()
-            lines[1] = f'Start: {start}\n'
-            file.truncate(0)
-            for i in range(len(lines)):
-                file.write(lines[i])
-            print(f'Starting time changed to {start}')
+            changeline(f'Start: {start}', 1)
+            print(f'Start time changed to {start}')
         elif next == 'f':
             end = input('When did you end your day? (hh:mm) ')
             start = getstarttime()
-            workingtime=calcminutes(start,end)
-            print('{0:.3}'.format(workingtime/60))
+            workingtime = calcminutes(start, end)
+            print('{0:.3}'.format(workingtime / 60))
         elif next == 'e':
             break
         else:
