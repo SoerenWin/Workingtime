@@ -1,2 +1,4 @@
 Good morning Sören
-Start: 13:00
+Start: 10:00
+break: 10 minutes
+break: 7 minutes

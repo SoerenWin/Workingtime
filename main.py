@@ -38,16 +38,18 @@ else:
 while True:
     if n > 1:
         next = input(
-            'What do you want to do next? Add break (period of time) (b) | Add break (point in time) (p) | Finish day (f) | change start time (s) | exit (e) ')
+            'What do you want to do next? Add break (b) | Finish day (f) | change start time (s) | exit (e) ')
         if next == 'b':
-            breaktime = input('\nHow long did your break last? [mm] ')
-            file.write(f'break: {breaktime} minutes\n')
-            print(f'Yor break lasted {breaktime} minutes')
-        elif next == 'p':
-            breaktime = calcminutes(input('When did you start your break? [hh:mm] '),
-                                    input('When did you end your break? [hh:mm] '))
-            file.write(f'break: {breaktime} minutes\n')
-            print(f'Yor break lasted {breaktime} minutes')
+            next = input('What do you want to do next? Add break duration (d) | Add break times (t) ')
+            if next == 'd':
+                breaktime = input('\nHow long did your break last? [mm] ')
+                file.write(f'break: {breaktime} minutes\n')
+                print(f'Yor break lasted {breaktime} minutes\n')
+            elif next == 't':
+                breaktime = calcminutes(input('When did you start your break? [hh:mm] '),
+                                        input('When did you end your break? [hh:mm] '))
+                file.write(f'break: {breaktime} minutes\n')
+                print(f'Yor break lasted {breaktime} minutes\n')
         elif next == 's':
             start = input('When did you start working? [hh:mm] ')
             file.seek(0)
@@ -57,7 +59,9 @@ while True:
             for i in range(len(lines)):
                 file.write(lines[i])
             print(f'Starting time changed to {start}')
-        else:
+        elif next=='e':
             break
+        else:
+            print(f'Please check your input "{next}".')
 
 file.close()
