@@ -40,11 +40,12 @@ def insertline(content, line):
         lines[i] = lines[i - 1]
     lines[line] = content + '\n'
 
-
+# open text file and setup "file" variable
 with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
     file.seek(0)
     lines = file.readlines()
 
+# first time on that day opening a document
 if len(lines) == 0:
     username = input('What is your name? ')
     lines.append(f'Good morning {username}\n')
@@ -52,28 +53,30 @@ if len(lines) == 0:
 else:
     username = lines[0][13:len(lines[0]) - 1]
 
+# putting in fixed rows
 if len(lines) == 1:
     start = input('\nWhen did you start working? [hh:mm] ')
     lines.append(f'Start: {start}\n')
     lines.append("Day finished: False\n")
-    lines.append("Data commited: False")
-    commited=False
+    lines.append("Data committed: False")
+    committed=False
     print(f'{username}, you started working at {start}\n')
+# day has already been ended once
 elif lines[len(lines) - 2][14:19] != 'False':
     print(
-        '\nYou already finished your day at {0} with {1:.4} hours of working time.'.format(lines[len(lines) - 2][14:19],
+        '\nYou already finished your day at {0} with {1:.4} hours of working time and {2} minutes of breaks.'.format(lines[len(lines) - 2][14:19],
                                                                                            lines[len(lines) - 2][
-                                                                                           25:30]))
-    if lines[len(lines) - 1][15:19] == 'True':
-        print('Data is already commited to the database, but you can still change it if you like.\n')
-        commited = True
+                                                                                           25:30], getbreakduration()))
+    # data has already been committed
+    if lines[len(lines) - 1][16:20] == 'True':
+        print('Data has already been committed to the database, but you can still change it if you like.\n')
     else:
-        print('Data isn\'t commited yet.\n')
-        commited = False
+        print('Data isn\'t committed yet.\n')
 else:
     print(
         f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made {getbreakduration()} minutes of breaks.\n')
 
+# main part
 while True:
     if len(lines) > 1:
         next = input(
@@ -96,11 +99,11 @@ while True:
             changeline(f'Start: {start}', 1)
             print(f'Start time changed to {start}')
         elif next == 'f':
-            end = input('When did you end your day? (hh:mm) ')
+            end = input('When did you finish your day? (hh:mm) ')
             start = getstarttime()
             workingtime = calcminutes(start, end) - getbreakduration()
             print('Day finished. Today, you worked {0:.3} hours.'.format(workingtime / 60))
-            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60),
+            changeline('Day finished: {0} with {1:.3} hours of working time and {2} minutes of breaks'.format(end, workingtime / 60, getbreakduration()),
                        len(lines) - 2)
             next = input('Do you want to commit your data to the database? (y/n) ')
             if next == 'y':
@@ -114,18 +117,20 @@ while True:
                 mycursor.execute(sql, val)
                 mydb.commit()
                 print(f'Data of the day successfully added to the database. day_id: {mycursor.lastrowid}\n')
-                changeline('Data commited: True', len(lines) - 1)
+                changeline('Data committed: True', len(lines) - 1)
             else:
                 print('Remember to upload your data to the database.\n')
-                changeline('Data commited: False', len(lines) - 1)
-                commited=False
+                changeline('Data committed: False', len(lines) - 1)
         elif next == 'e':
-            if lines[len(lines) - 2][14:19] != 'False' and lines[len(lines) - 1][15:20] == 'False':
-                next=input('You finished your day but your data is not commited yet. Do you want to commit your data now? (y/n) ')
+            # day finished but not committed
+            if lines[len(lines) - 2][14:19] != 'False' and lines[len(lines) - 1][16:21] == 'False':
+                next=input('You finished your day but your data is not committed yet. Do you want to commit your data now? (y/n) ')
                 if next=='y':
+                    # delete data from today in database, when already committed
                     sql = f"Delete FROM workingtime WHERE date='{datetime.date.today()}'"
                     mycursor.execute(sql)
                     mydb.commit()
+                    # add new row in database
                     sql = "INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
                     val = (
                         datetime.date.today(), getstarttime(), getendtime(), '{0:.3}'.format(calcminutes(getstarttime(),getendtime())-getbreakduration()/60),
@@ -134,7 +139,8 @@ while True:
                     mycursor.execute(sql, val)
                     mydb.commit()
                     print(f'Data of the day successfully added to the database. day_id: {mycursor.lastrowid}\n')
-                    changeline('Data commited: True', len(lines) - 1)
+                    changeline('Data committed: True', len(lines) - 1)
+            # print information in text file
             with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
                 file.seek(0)
                 file.truncate()
