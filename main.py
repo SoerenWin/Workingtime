@@ -48,6 +48,8 @@ if len(lines) == 1:
     lines.append("Day finished: False\n")
     lines.append("Data commited: False")
     print(f'{username}, you started working at {start}\n')
+elif lines[len(lines)-2][14:19]!='False':
+    print('\nYou already finished your day at {0} with {1:.4} hours of workingtime\n'.format(lines[len(lines)-2][14:19], lines[len(lines)-2][25:30]))
 else:
     print(
         f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made {getbreakduration()} minutes of breaks.\n')
@@ -85,7 +87,7 @@ while True:
                 file.truncate()
                 for line in lines:
                     file.write(line)
-            print('Bye Bye')
+            print('\nBye Bye')
             break
         else:
             print(f'Please check your input "{next}".')
