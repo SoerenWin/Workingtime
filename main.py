@@ -14,7 +14,7 @@ def getstarttime():
 
 def getbreakduration():
     breakduration = 0
-    for i in range(2, len(lines) - 2):
+    for i in range(2, len(lines) - 1):
         breakduration += int(lines[i][7:10])
     return breakduration
 
@@ -46,9 +46,8 @@ if len(lines) == 1:
     start = input('\nWhen did you start working? [hh:mm] ')
     lines.append(f'Start: {start}\n')
     lines.append("Day finished: False\n")
-    lines.append("Data commited: False")
     print(f'{username}, you started working at {start}\n')
-elif lines[len(lines)-2][14:19]!='False':
+elif lines[len(lines)-1][14:19]!='False':
     print('\nYou already finished your day at {0} with {1:.4} hours of workingtime\n'.format(lines[len(lines)-2][14:19], lines[len(lines)-2][25:30]))
 else:
     print(
@@ -62,12 +61,12 @@ while True:
             next = input('What do you want to do next? Add break duration (d) | Add break times (t) ')
             if next == 'd':
                 breaktime = input('\nHow long did your break last? [mm] ')
-                insertline(f'break: {breaktime} minutes', len(lines) - 2)
+                insertline(f'break: {breaktime} minutes', len(lines) - 1)
                 print(f'Yor break lasted {breaktime} minutes\n')
             elif next == 't':
                 breaktime = calcminutes(input('When did you start your break? [hh:mm] '),
                                         input('When did you end your break? [hh:mm] '))
-                insertline(f'break: {breaktime} minutes', len(lines) - 2)
+                insertline(f'break: {breaktime} minutes', len(lines) - 1)
                 print(f'Yor break lasted {breaktime} minutes\n')
             else:
                 print(f'Please check your input "{next}".')
@@ -80,7 +79,7 @@ while True:
             start = getstarttime()
             workingtime = calcminutes(start, end) - getbreakduration()
             print('Day finished. Today you worked {0:.3} hours.'.format(workingtime / 60))
-            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60), len(lines) - 2)
+            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60), len(lines) - 1)
         elif next == 'e':
             with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
                 file.seek(0)
