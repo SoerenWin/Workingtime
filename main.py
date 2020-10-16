@@ -19,6 +19,9 @@ def calcminutes(starttime, endtime):
 def getstarttime():
     return lines[1][7:12]
 
+def getendtime():
+    return lines[len(lines)-2][14:19]
+
 
 def getbreakduration():
     breakduration = 0
@@ -54,6 +57,7 @@ if len(lines) == 1:
     lines.append(f'Start: {start}\n')
     lines.append("Day finished: False\n")
     lines.append("Data commited: False")
+    commited=False
     print(f'{username}, you started working at {start}\n')
 elif lines[len(lines) - 2][14:19] != 'False':
     print(
@@ -124,6 +128,18 @@ while True:
                 file.truncate()
                 for line in lines:
                     file.write(line)
+            if lines[len(lines) - 2][14:19] != 'False' and commited==False:
+                next=input('You finished your day but your data is not commited yet. Do you want to commit your data now? (y/n) ')
+                if next=='y':
+                    sql = "INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
+                    val = (
+                        datetime.date.today(), getstarttime(), getendtime(), '{0:.3}'.format(calcminutes(getstarttime(),getendtime())-getbreakduration()/60),
+                        getbreakduration(),
+                        '{0:.3}'.format(calcminutes(getstarttime(), getendtime()) / 60))
+                    mycursor.execute(sql, val)
+                    mydb.commit()
+                    print(f'Data of the day successfully added to the database. day_id: {mycursor.lastrowid}\n')
+                    changeline('Data commited: True', len(lines) - 1)
             print('\nBye Bye')
             break
         else:
