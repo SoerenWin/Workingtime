@@ -48,7 +48,7 @@ if len(lines) == 1:
     lines.append("Day finished: False\n")
     print(f'{username}, you started working at {start}\n')
 elif lines[len(lines)-1][14:19]!='False':
-    print('\nYou already finished your day at {0} with {1:.4} hours of workingtime\n'.format(lines[len(lines)-2][14:19], lines[len(lines)-2][25:30]))
+    print('\nYou already finished your day at {0} with {1:.4} hours of workingtime and {2} minutes of breaks.\n'.format(lines[len(lines)-1][14:19], lines[len(lines)-1][25:30], getbreakduration()))
 else:
     print(
         f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made {getbreakduration()} minutes of breaks.\n')
@@ -79,7 +79,7 @@ while True:
             start = getstarttime()
             workingtime = calcminutes(start, end) - getbreakduration()
             print('Day finished. Today you worked {0:.3} hours.'.format(workingtime / 60))
-            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60), len(lines) - 1)
+            changeline('Day finished: {0} with {1:.3} hours of working time and {2} minutes of breaks'.format(end, workingtime / 60,getbreakduration()), len(lines) - 1)
         elif next == 'e':
             with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
                 file.seek(0)
