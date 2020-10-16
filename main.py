@@ -99,10 +99,18 @@ while True:
             changeline(f'Start: {start}', 1)
             print(f'Start time changed to {start}')
         elif next == 'f':
+            file.close()
+            file = open(f'workingtime_{datetime.date.today()}.txt', 'a+')
+            file.seek(0)
+            lines = file.readlines()
             end = input('When did you end your day? (hh:mm) ')
             start = getstarttime()
-            workingtime = calcminutes(start, end)
-            print('{0:.3}'.format(workingtime / 60))
+            workingtime = calcminutes(start, end)-getbreakduration()
+            print('Day finished. Today you worked {0:.3} hours.'.format(workingtime / 60))
+            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end,workingtime/60),len(lines)-2)
+            next=input('If you want to end the program, press any key. | Otherwise type in (c) ')
+            if next!='c':
+                break
         elif next == 'e':
             print('Bye Bye')
             break
