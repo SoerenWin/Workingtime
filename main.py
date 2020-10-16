@@ -1,4 +1,12 @@
 import datetime
+import mysql.connector
+
+mydb = mysql.connector.connect(host="localhost",
+                               user="root",
+                               password="ndhsv",
+                               database='workingtime'
+                               )
+mycursor = mydb.cursor()
 
 
 def calcminutes(starttime, endtime):
@@ -34,7 +42,6 @@ with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
     file.seek(0)
     lines = file.readlines()
 
-
 if len(lines) == 0:
     username = input('What is your name? ')
     lines.append(f'Good morning {username}\n')
@@ -48,8 +55,11 @@ if len(lines) == 1:
     lines.append("Day finished: False\n")
     lines.append("Data commited: False")
     print(f'{username}, you started working at {start}\n')
-elif lines[len(lines)-2][14:19]!='False':
-    print('\nYou already finished your day at {0} with {1:.4} hours of workingtime\n'.format(lines[len(lines)-2][14:19], lines[len(lines)-2][25:30]))
+elif lines[len(lines) - 2][14:19] != 'False':
+    print(
+        '\nYou already finished your day at {0} with {1:.4} hours of workingtime\n'.format(lines[len(lines) - 2][14:19],
+                                                                                           lines[len(lines) - 2][
+                                                                                           25:30]))
 else:
     print(
         f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made {getbreakduration()} minutes of breaks.\n')
@@ -79,8 +89,16 @@ while True:
             end = input('When did you end your day? (hh:mm) ')
             start = getstarttime()
             workingtime = calcminutes(start, end) - getbreakduration()
-            print('Day finished. Today you worked {0:.3} hours.'.format(workingtime / 60))
-            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60), len(lines) - 2)
+            print('Day finished. Today, you worked {0:.3} hours.'.format(workingtime / 60))
+            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60),
+                       len(lines) - 2)
+            next = input('Do you want to commit your data to the database? (y/n)')
+            if next == 'y':
+                sql="INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
+                val=(datetime.date.today(),getstarttime(),end,'{0:.3}'.format(workingtime/60),getbreakduration(),'{0:.3}'.format(calcminutes(start,end)/60))
+                mycursor.execute(sql, val)
+                mydb.commit();
+                print(f'Data of the day successfully added to the database. day_id: {mycursor.lastrowid}\n')
         elif next == 'e':
             with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
                 file.seek(0)
