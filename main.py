@@ -83,7 +83,7 @@ while True:
             if next == 'd':
                 breaktime = input('\nHow long did your break last? [mm] ')
                 insertline(f'break: {breaktime} minutes', len(lines) - 2)
-                print(f'Yor break lasted {breaktime} minutes\n')
+                print(f'Your break lasted {breaktime} minutes\n')
             elif next == 't':
                 breaktime = calcminutes(input('When did you start your break? [hh:mm] '),
                                         input('When did you end your break? [hh:mm] '))
@@ -103,7 +103,10 @@ while True:
             changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60),
                        len(lines) - 2)
             next = input('Do you want to commit your data to the database? (y/n) ')
-            if next == 'y' and commited == False:
+            if next == 'y':
+                sql = f"Delete FROM workingtime WHERE date='{datetime.date.today()}'"
+                mycursor.execute(sql)
+                mydb.commit()
                 sql = "INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
                 val = (
                     datetime.date.today(), getstarttime(), end, '{0:.3}'.format(workingtime / 60), getbreakduration(),
@@ -112,25 +115,17 @@ while True:
                 mydb.commit()
                 print(f'Data of the day successfully added to the database. day_id: {mycursor.lastrowid}\n')
                 changeline('Data commited: True', len(lines) - 1)
-                commited = True
-            elif next == 'y' and commited == True:
-                sql = f"Delete FROM workingtime WHERE date='{datetime.date.today()}'"
-                mycursor.execute(sql)
-                mydb.commit()
-                sql = "INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
-                val = (datetime.date.today(), getstarttime(), end, '{0:.3}'.format(workingtime / 60), getbreakduration(),'{0:.3}'.format(calcminutes(start, end) / 60))
-                mycursor.execute(sql, val)
-                mydb.commit()
-                print(f'Data of the day successfully updated. day_id: {mycursor.lastrowid}\n')
+            else:
+                print('Remember to upload your data to the database.\n')
+                changeline('Data commited: False', len(lines) - 1)
+                commited=False
         elif next == 'e':
-            with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
-                file.seek(0)
-                file.truncate()
-                for line in lines:
-                    file.write(line)
-            if lines[len(lines) - 2][14:19] != 'False' and commited==False:
+            if lines[len(lines) - 2][14:19] != 'False' and lines[len(lines) - 1][15:20] == 'False':
                 next=input('You finished your day but your data is not commited yet. Do you want to commit your data now? (y/n) ')
                 if next=='y':
+                    sql = f"Delete FROM workingtime WHERE date='{datetime.date.today()}'"
+                    mycursor.execute(sql)
+                    mydb.commit()
                     sql = "INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
                     val = (
                         datetime.date.today(), getstarttime(), getendtime(), '{0:.3}'.format(calcminutes(getstarttime(),getendtime())-getbreakduration()/60),
@@ -140,6 +135,11 @@ while True:
                     mydb.commit()
                     print(f'Data of the day successfully added to the database. day_id: {mycursor.lastrowid}\n')
                     changeline('Data commited: True', len(lines) - 1)
+            with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
+                file.seek(0)
+                file.truncate()
+                for line in lines:
+                    file.write(line)
             print('\nBye Bye')
             break
         else:
