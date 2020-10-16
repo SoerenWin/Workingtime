@@ -1,7 +1,3 @@
-# This is a sample Python script.
-
-# Press Umschalt+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import datetime
 
 
@@ -13,13 +9,10 @@ def calcminutes(starttime, endtime):
 
 
 def getstarttime():
-    file.seek(0)
-    return file.readlines()[1][7:12]
+    return lines[1][7:12]
 
 
 def getbreakduration():
-    file.seek(0)
-    lines = file.readlines()
     breakduration = 0
     for i in range(2, len(lines) - 2):
         breakduration += int(lines[i][7:10])
@@ -27,58 +20,40 @@ def getbreakduration():
 
 
 def changeline(content, line):
-    file.seek(0)
-    lines = file.readlines()
     lines[line] = content + '\n'
-    file.truncate(0)
-    for i in range(len(lines)):
-        file.write(lines[i])
 
 
 def insertline(content, line):
-    file.seek(0)
-    lines = file.readlines()
     lines.append('added')
     for i in range(len(lines) - 1, line, -1):
         lines[i] = lines[i - 1]
     lines[line] = content + '\n'
-    file.truncate(0)
-    for i in range(len(lines)):
-        file.write(lines[i])
 
 
-file = open(f'workingtime_{datetime.date.today()}.txt', 'a+')
-file.seek(0)
-lines = file.readlines()
-n = len(lines)
+with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
+    file.seek(0)
+    lines = file.readlines()
 
-# TODO messed up row order when inserting all information in one turn
-if n == 0:
+
+if len(lines) == 0:
     username = input('What is your name? ')
-    file.write(f'Good morning {username}\n')
+    lines.append(f'Good morning {username}\n')
     print(f'Good morning {username}')
-    n = n + 1
 else:
     username = lines[0][13:len(lines[0]) - 1]
 
-if n == 1:
+if len(lines) == 1:
     start = input('\nWhen did you start working? [hh:mm] ')
-    file.write(f'Start: {start}\n')
-    file.write("Day finished: False\n")
-    file.write("Data commited: False")
+    lines.append(f'Start: {start}\n')
+    lines.append("Day finished: False\n")
+    lines.append("Data commited: False")
     print(f'{username}, you started working at {start}\n')
-    n += 1
 else:
     print(
         f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made {getbreakduration()} minutes of breaks.\n')
 
-file.close()
-file = open(f'workingtime_{datetime.date.today()}.txt', 'a+')
-file.seek(0)
-lines = file.readlines()
-
 while True:
-    if n > 1:
+    if len(lines) > 1:
         next = input(
             'What do you want to do next? Add break (b) | Finish day (f) | change start time (s) | exit (e) ')
         if next == 'b':
@@ -99,22 +74,18 @@ while True:
             changeline(f'Start: {start}', 1)
             print(f'Start time changed to {start}')
         elif next == 'f':
-            file.close()
-            file = open(f'workingtime_{datetime.date.today()}.txt', 'a+')
-            file.seek(0)
-            lines = file.readlines()
             end = input('When did you end your day? (hh:mm) ')
             start = getstarttime()
-            workingtime = calcminutes(start, end)-getbreakduration()
+            workingtime = calcminutes(start, end) - getbreakduration()
             print('Day finished. Today you worked {0:.3} hours.'.format(workingtime / 60))
-            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end,workingtime/60),len(lines)-2)
-            next=input('If you want to end the program, press any key. | Otherwise type in (c) ')
-            if next!='c':
-                break
+            changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60), len(lines) - 2)
         elif next == 'e':
+            with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
+                file.seek(0)
+                file.truncate()
+                for line in lines:
+                    file.write(line)
             print('Bye Bye')
             break
         else:
             print(f'Please check your input "{next}".')
-
-file.close()
