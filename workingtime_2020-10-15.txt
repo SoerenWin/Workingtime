@@ -1,6 +1,0 @@
-Good morning dwd
-Start: 12:03
-break: 10 minutes
-break: 25 minutes
-You didn't finish your day yet.
-You didn't commit your data to the database yet.

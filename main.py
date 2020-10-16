@@ -52,6 +52,7 @@ file.seek(0)
 lines = file.readlines()
 n = len(lines)
 
+# TODO messed up row order when inserting all information in one turn
 if n == 0:
     username = input('What is your name? ')
     file.write(f'Good morning {username}\n')
@@ -63,13 +64,18 @@ else:
 if n == 1:
     start = input('\nWhen did you start working? [hh:mm] ')
     file.write(f'Start: {start}\n')
-    file.write("You didn't finish your day yet.\n")
-    file.write("You didn't commit your data to the database yet.")
+    file.write("Day finished: False\n")
+    file.write("Data commited: False")
     print(f'{username}, you started working at {start}\n')
     n += 1
 else:
     print(
         f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made {getbreakduration()} minutes of breaks.\n')
+
+file.close()
+file = open(f'workingtime_{datetime.date.today()}.txt', 'a+')
+file.seek(0)
+lines = file.readlines()
 
 while True:
     if n > 1:
@@ -98,6 +104,7 @@ while True:
             workingtime = calcminutes(start, end)
             print('{0:.3}'.format(workingtime / 60))
         elif next == 'e':
+            print('Bye Bye')
             break
         else:
             print(f'Please check your input "{next}".')
