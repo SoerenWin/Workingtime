@@ -1,5 +1,5 @@
 Good morning Sören
 Start: 12:01
 break: 10 minutes
-Day finished: 17:30 with 5.32 hours of working time
+Day finished: 17:03 with 4.87 hours of working time
 Data commited: False

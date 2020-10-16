@@ -57,9 +57,15 @@ if len(lines) == 1:
     print(f'{username}, you started working at {start}\n')
 elif lines[len(lines) - 2][14:19] != 'False':
     print(
-        '\nYou already finished your day at {0} with {1:.4} hours of workingtime\n'.format(lines[len(lines) - 2][14:19],
+        '\nYou already finished your day at {0} with {1:.4} hours of working time.'.format(lines[len(lines) - 2][14:19],
                                                                                            lines[len(lines) - 2][
                                                                                            25:30]))
+    if lines[len(lines) - 1][15:19] == 'True':
+        print('Data is already commited to the database, but you can still change it if you like.\n')
+        commited = True
+    else:
+        print('Data isn\'t commited yet.\n')
+        commited = False
 else:
     print(
         f'\nGood morning {username}\nToday, you started working at {getstarttime()} and already made {getbreakduration()} minutes of breaks.\n')
@@ -92,13 +98,26 @@ while True:
             print('Day finished. Today, you worked {0:.3} hours.'.format(workingtime / 60))
             changeline('Day finished: {0} with {1:.3} hours of working time'.format(end, workingtime / 60),
                        len(lines) - 2)
-            next = input('Do you want to commit your data to the database? (y/n)')
-            if next == 'y':
-                sql="INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
-                val=(datetime.date.today(),getstarttime(),end,'{0:.3}'.format(workingtime/60),getbreakduration(),'{0:.3}'.format(calcminutes(start,end)/60))
+            next = input('Do you want to commit your data to the database? (y/n) ')
+            if next == 'y' and commited == False:
+                sql = "INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
+                val = (
+                    datetime.date.today(), getstarttime(), end, '{0:.3}'.format(workingtime / 60), getbreakduration(),
+                    '{0:.3}'.format(calcminutes(start, end) / 60))
                 mycursor.execute(sql, val)
-                mydb.commit();
+                mydb.commit()
                 print(f'Data of the day successfully added to the database. day_id: {mycursor.lastrowid}\n')
+                changeline('Data commited: True', len(lines) - 1)
+                commited = True
+            elif next == 'y' and commited == True:
+                sql = f"Delete FROM workingtime WHERE date='{datetime.date.today()}'"
+                mycursor.execute(sql)
+                mydb.commit()
+                sql = "INSERT INTO workingtime (date, starttime, endtime, effectivetime, breaktime, workingtime) VALUES (%s,%s,%s,%s,%s,%s)"
+                val = (datetime.date.today(), getstarttime(), end, '{0:.3}'.format(workingtime / 60), getbreakduration(),'{0:.3}'.format(calcminutes(start, end) / 60))
+                mycursor.execute(sql, val)
+                mydb.commit()
+                print(f'Data of the day successfully updated. day_id: {mycursor.lastrowid}\n')
         elif next == 'e':
             with open(f'workingtime_{datetime.date.today()}.txt', 'a+') as file:
                 file.seek(0)
