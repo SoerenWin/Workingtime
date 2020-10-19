@@ -3,5 +3,5 @@ Start: 08:31
 break: 07 minutes
 break: 24 minutes
 break: 18 minutes
-Day finished: 17:47 with 8.45 hours of working time and 49 minutes of breaks
+Day finished: 18:00 with 8.67 hours of working time and 49 minutes of breaks
 Data committed: True

@@ -1,0 +1,4 @@
+Good morning Sören
+Start: 09:12
+Day finished: False
+Data committed: False
