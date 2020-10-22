@@ -1,6 +1,0 @@
-Good morning Sören
-Start: 08:04
-break: 05 minutes
-break: 38 minutes
-Day finished: 18:30 with 9.72 hours of working time and 43 minutes of breaks
-Data committed: True
