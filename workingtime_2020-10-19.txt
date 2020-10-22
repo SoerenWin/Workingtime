@@ -1,4 +1,5 @@
 Good morning Sören
 Start: 09:12
-Day finished: False
-Data committed: False
+break: 45 minutes
+Day finished: 17:00 with 7.05 hours of working time and 45 minutes of breaks
+Data committed: True

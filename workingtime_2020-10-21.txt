@@ -1,0 +1,6 @@
+Good morning S�ren
+Start: 08:45
+break: 08 minutes
+break: 60 minutes
+Day finished: 18:15 with 8.37 hours of working time and 68 minutes of breaks
+Data committed: True

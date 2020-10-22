@@ -85,12 +85,18 @@ while True:
             next = input('What do you want to do next? Add break duration (d) | Add break times (t) ')
             if next == 'd':
                 breaktime = input('\nHow long did your break last? [mm] ')
-                insertline(f'break: {breaktime} minutes', len(lines) - 2)
+                if len(breaktime)==1:
+                    insertline(f'break: 0{breaktime} minutes', len(lines) - 2)
+                else:
+                    insertline(f'break: {breaktime} minutes', len(lines) - 2)
                 print(f'Your break lasted {breaktime} minutes\n')
             elif next == 't':
                 breaktime = calcminutes(input('When did you start your break? [hh:mm] '),
                                         input('When did you end your break? [hh:mm] '))
-                insertline(f'break: {breaktime} minutes', len(lines) - 2)
+                if breaktime < 10:
+                    insertline(f'break: 0{breaktime} minutes', len(lines) - 2)
+                else:
+                    insertline(f'break: {breaktime} minutes', len(lines) - 2)
                 print(f'Yor break lasted {breaktime} minutes\n')
             else:
                 print(f'Please check your input "{next}".')
