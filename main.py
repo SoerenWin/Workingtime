@@ -1,10 +1,10 @@
 import datetime
 import mysql.connector
 
-mydb = mysql.connector.connect(host="localhost",
-                               user="root",
-                               password="ndhsv",
-                               database='workingtime'
+mydb = mysql.connector.connect(host="<your host>",
+                               user="<your username>",
+                               password="<your password>",
+                               database='<your database>'
                                )
 mycursor = mydb.cursor()
 
