@@ -14,6 +14,6 @@ Um die Standardversion zu benutzen, muss man lediglich das Python-Programm "main
 In der Datenbankversion kann man die Daten zusätzlcih zum Textdokument noch in einer Datenbank speichern. Dafür muss man nur die dafür vorgesehenen Felder im Quellcode mit den Datenbankinformationen ausfüllen. Ansonsten funktioniert das Programm genauso wie in der Standardversion. Man muss nur darauf achten, dass man seine Daten auch in die Datenbank hochlädt, wenn man dananch gefragt wird. Dies ist nur möglich, wenn man seinen Tag beendet hat. Man kann ganz einfach die Informationen in der Datenbank überschreiben. Dafür ist es nur wichtig, dass die Änderungen durch das Beenden des Tages speichert. 
 Wichtig: Um die Datenbankversion benutzen zu können, muss man das dafür benötigte package installiert haben. Dafür navigiert man mit dem Windows Terminal in den Skript-Ordner von python und gibt den Befehl 
 
-    pip install MySql-python
+    python -m pip install mysql-connector-python
 
 ein.
