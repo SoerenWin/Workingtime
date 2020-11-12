@@ -1,8 +1,4 @@
 # Workingtimepractice
-## Übungsprojekt
-
-
-### Übungsprojekt zum Üben von Python, Datenbanken, dem Zugriff mit Python auf Datenbanken, SQL, git, Power BI und Markdown.
 
 ### Erklärung der Bentzung
 Dies ist ein Tool, das die Erfasssung der eigenen Arbeitszeit erleichtern soll. Man kann sich über die Branches zwischen zwei Versionen entscheiden. Die eine speichert die Daten nicht nur in einem Textdokument, sondern ist darüber hinaus noch mit einer Datenbank verknüpft.
